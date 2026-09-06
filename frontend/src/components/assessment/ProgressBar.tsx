@@ -7,12 +7,16 @@ function ProgressBar({
   currentStep,
   totalSteps,
 }: ProgressBarProps) {
-  const progress = (currentStep / totalSteps) * 100;
+  const progress = Math.min(
+    (currentStep / totalSteps) * 100,
+    100
+  );
 
   return (
     <div className="w-full">
       <div className="mb-3 flex items-center justify-between text-xs font-medium text-slate-500">
         <span>Getting started</span>
+
         <span>
           {currentStep} of {totalSteps}
         </span>

@@ -1,28 +1,56 @@
 import { useState } from "react";
+
 import ProgressBar from "../../components/assessment/ProgressBar";
 import WelcomeStep from "../../components/assessment/WelcomeStep";
 import ConsentStep from "../../components/assessment/ConsentStep";
 import LanguageStep from "../../components/assessment/LanguageStep";
+import ModeStep from "../../components/assessment/ModeStep";
 
-type AssessmentStep = 1 | 2 | 3;
+type AssessmentStep = 1 | 2 | 3 | 4;
 
 function AssessmentPage() {
-  const [step, setStep] = useState<AssessmentStep>(1);
-  const [language, setLanguage] = useState("en");
+  const [step, setStep] =
+    useState<AssessmentStep>(1);
 
-  const handleLanguageContinue = (selectedLanguage: string) => {
+  const [language, setLanguage] =
+    useState("en");
+
+  const [mode, setMode] =
+    useState<"text" | "voice">("text");
+
+  const handleLanguageContinue = (
+    selectedLanguage: string
+  ) => {
     setLanguage(selectedLanguage);
+    setStep(4);
+  };
 
-    console.log("Selected language:", selectedLanguage);
+  const handleModeContinue = (
+    selectedMode: "text" | "voice"
+  ) => {
+    setMode(selectedMode);
 
-    // Next phase:
-    // move into text / voice assessment.
+    console.log(
+      "Assessment language:",
+      language
+    );
+
+    console.log(
+      "Interaction mode:",
+      selectedMode
+    );
+
+    // Phase 3.5:
+    // move into conversation interface.
   };
 
   return (
     <div className="min-h-screen bg-[#fcfafb]">
+
+      {/* Header */}
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
+
           <a
             href="/"
             className="text-lg font-semibold tracking-tight text-slate-950"
@@ -33,18 +61,24 @@ function AssessmentPage() {
           <span className="text-xs font-medium uppercase tracking-[0.15em] text-slate-400">
             A friend who listens
           </span>
+
         </div>
       </header>
 
+      {/* Main */}
       <main className="mx-auto max-w-5xl px-6 py-10 sm:py-14">
+
+        {/* Progress */}
         <div className="mx-auto max-w-2xl">
           <ProgressBar
             currentStep={step}
-            totalSteps={3}
+            totalSteps={4}
           />
         </div>
 
+        {/* Step content */}
         <div className="mx-auto mt-14 max-w-3xl">
+
           {step === 1 && (
             <WelcomeStep
               onContinue={() => setStep(2)}
@@ -64,7 +98,16 @@ function AssessmentPage() {
               onContinue={handleLanguageContinue}
             />
           )}
+
+          {step === 4 && (
+            <ModeStep
+              onBack={() => setStep(3)}
+              onContinue={handleModeContinue}
+            />
+          )}
+
         </div>
+
       </main>
     </div>
   );
