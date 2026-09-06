@@ -5,6 +5,7 @@ import WelcomeStep from "../../components/assessment/WelcomeStep";
 import ConsentStep from "../../components/assessment/ConsentStep";
 import LanguageStep from "../../components/assessment/LanguageStep";
 import ModeStep from "../../components/assessment/ModeStep";
+import { useNavigate } from "react-router-dom";
 
 type AssessmentStep = 1 | 2 | 3 | 4;
 
@@ -17,6 +18,8 @@ function AssessmentPage() {
 
   const [mode, setMode] =
     useState<"text" | "voice">("text");
+
+  const navigate = useNavigate();
 
   const handleLanguageContinue = (
     selectedLanguage: string
@@ -39,6 +42,8 @@ function AssessmentPage() {
       "Interaction mode:",
       selectedMode
     );
+
+    navigate("/conversation");
 
     // Phase 3.5:
     // move into conversation interface.

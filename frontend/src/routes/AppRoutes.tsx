@@ -4,6 +4,7 @@ import AssessmentPage from "../pages/assessment/AssessmentPage";
 import SupportPage from "../pages/support/SupportPage";
 import CounsellorDashboard from "../pages/counsellor/CounsellorDashboard";
 import AdminDashboard from "../pages/admin/AdminDashboard";
+import ConversationPage from "../pages/conversation/ConversationPage";
 
 function AppRoutes() {
   return (
@@ -17,6 +18,8 @@ function AppRoutes() {
       <Route path="/counsellor" element={<CounsellorDashboard />} />
 
       <Route path="/admin" element={<AdminDashboard />} />
+
+      <Route path="/conversation" element={<ConversationPage />} />
     </Routes>
   );
 }
