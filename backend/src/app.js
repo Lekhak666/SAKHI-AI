@@ -3,6 +3,8 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 
+import assessmentRoutes from "./routes/assessment.routes.js";
+
 const app = express();
 
 app.use(
@@ -14,6 +16,8 @@ app.use(
 app.use(helmet());
 app.use(express.json());
 app.use(morgan("dev"));
+
+app.use("/api/assessments", assessmentRoutes);
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({
