@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import assessmentRoutes from "./routes/assessment.routes.js";
+import conversationRoutes from "./routes/conversation.routes.js";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 app.use("/api/assessments", assessmentRoutes);
+app.use("/api/conversations", conversationRoutes);
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({
