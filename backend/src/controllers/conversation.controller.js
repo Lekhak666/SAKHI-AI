@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
+
 import Conversation from "../models/Conversation.js";
+import { generateAIResponse } from "../services/ai.service.js";
 
 export const getConversation = async (req, res, next) => {
   try {
@@ -72,11 +74,31 @@ export const addMessage = async (req, res, next) => {
 
     conversation.messages.push(userMessage);
 
+    const aiResponse = await generateAIResponse(conversation.messages);
+
+    if (!aiResponse) {
+      return res.status(502).json({
+        success: false,
+        message: "SAKHI could not generate a response",
+      });
+    }
+
+    const assistantMessage = {
+      role: "assistant",
+      content: aiResponse,
+    };
+
+    conversation.messages.push(assistantMessage);
+
     await conversation.save();
 
     res.status(201).json({
       success: true,
-      message: userMessage,
+
+      userMessage,
+
+      assistantMessage,
+
       conversationId: conversation._id,
     });
   } catch (error) {

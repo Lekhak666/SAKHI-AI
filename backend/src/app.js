@@ -5,6 +5,7 @@ import morgan from "morgan";
 
 import assessmentRoutes from "./routes/assessment.routes.js";
 import conversationRoutes from "./routes/conversation.routes.js";
+import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 
@@ -27,5 +28,7 @@ app.get("/api/health", (req, res) => {
     message: "SAKHI-AI backend is running",
   });
 });
+
+app.use(errorHandler);
 
 export default app;
