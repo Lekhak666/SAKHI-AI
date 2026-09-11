@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 import Conversation from "../models/Conversation.js";
 import { generateAIResponse } from "../services/ai.service.js";
-import { assessRisk } from "../services/safety.service.js";
+import { assessRisk, getHighestRiskLevel } from "../services/safety.service.js";
 
 export const getConversation = async (req, res, next) => {
   try {
@@ -77,7 +77,10 @@ export const addMessage = async (req, res, next) => {
 
     const risk = assessRisk(message);
 
-    conversation.riskLevel = risk.level;
+    conversation.riskLevel = getHighestRiskLevel(
+      conversation.riskLevel,
+      risk.level,
+    );
 
     if (risk.level === "high") {
       const crisisResponse =
@@ -94,14 +97,17 @@ export const addMessage = async (req, res, next) => {
 
       return res.status(201).json({
         success: true,
-        riskLevel: risk.level,
+        riskLevel: conversation.riskLevel,
         userMessage,
         assistantMessage,
         conversationId: conversation._id,
       });
     }
 
-    const aiResponse = await generateAIResponse(conversation.messages);
+    const aiResponse = await generateAIResponse(
+      conversation.messages,
+      risk.level,
+    );
 
     if (!aiResponse) {
       return res.status(502).json({

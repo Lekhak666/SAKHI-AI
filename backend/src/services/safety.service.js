@@ -66,3 +66,17 @@ export const assessRisk = (message) => {
     reason: null,
   };
 };
+
+const RISK_PRIORITY = {
+  low: 0,
+  medium: 1,
+  high: 2,
+};
+
+export const getHighestRiskLevel = (currentLevel, newLevel) => {
+  if (RISK_PRIORITY[newLevel] > RISK_PRIORITY[currentLevel]) {
+    return newLevel;
+  }
+
+  return currentLevel;
+};
