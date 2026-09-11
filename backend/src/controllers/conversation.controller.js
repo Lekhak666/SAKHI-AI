@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 import Conversation from "../models/Conversation.js";
 import { generateAIResponse } from "../services/ai.service.js";
+import { assessRisk } from "../services/safety.service.js";
 
 export const getConversation = async (req, res, next) => {
   try {
@@ -74,6 +75,32 @@ export const addMessage = async (req, res, next) => {
 
     conversation.messages.push(userMessage);
 
+    const risk = assessRisk(message);
+
+    conversation.riskLevel = risk.level;
+
+    if (risk.level === "high") {
+      const crisisResponse =
+        "I'm really sorry you're going through this. You deserve immediate support from a real person. If you may be in immediate danger or think you might hurt yourself, please contact local emergency services or go to the nearest emergency department. If possible, stay with someone you trust and tell them what you're experiencing.";
+
+      const assistantMessage = {
+        role: "assistant",
+        content: crisisResponse,
+      };
+
+      conversation.messages.push(assistantMessage);
+
+      await conversation.save();
+
+      return res.status(201).json({
+        success: true,
+        riskLevel: risk.level,
+        userMessage,
+        assistantMessage,
+        conversationId: conversation._id,
+      });
+    }
+
     const aiResponse = await generateAIResponse(conversation.messages);
 
     if (!aiResponse) {
@@ -94,11 +121,9 @@ export const addMessage = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-
+      riskLevel: risk.level,
       userMessage,
-
       assistantMessage,
-
       conversationId: conversation._id,
     });
   } catch (error) {
