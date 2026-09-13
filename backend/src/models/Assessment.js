@@ -5,7 +5,7 @@ const assessmentSchema = new mongoose.Schema(
     language: {
       type: String,
       required: true,
-      enum: ["en"],
+      enum: ["en", "hi", "bn"],
     },
 
     mode: {

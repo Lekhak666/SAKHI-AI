@@ -1,10 +1,12 @@
 import Groq from "groq-sdk";
 
+import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from "../config/languages.js";
+
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-const SYSTEM_PROMPT = `
+const BASE_SYSTEM_PROMPT = `
 You are SAKHI, an empathetic AI support assistant.
 
 Your role is to:
@@ -29,12 +31,41 @@ Safety rules:
 
 Keep responses conversational and reasonably concise.
 Do not overwhelm the user with long lists unless they ask for detailed information.
+
+LANGUAGE REQUIREMENT:
+The user selected a language for this conversation.
+
+The user may naturally mix English, Hindi, and Bengali in the same message.
+Understand mixed-language input correctly.
+
+However, always respond in the selected conversation language unless
+the user explicitly asks to switch languages.
+
+Do not unnecessarily translate the user's message.
+
+Maintain the selected language consistently throughout your response.
 `;
 
-export const generateAIResponse = async (messages, currentRiskLevel) => {
+export const generateAIResponse = async (
+  messages,
+  currentRiskLevel,
+  language = DEFAULT_LANGUAGE,
+) => {
   console.log("========== AI DEBUG ==========");
   console.log("AI current risk level:", currentRiskLevel);
+  console.log("AI selected language:", language);
   console.log("==============================");
+
+  const selectedLanguage =
+    SUPPORTED_LANGUAGES[language] || SUPPORTED_LANGUAGES[DEFAULT_LANGUAGE];
+
+  const languageContext = `
+SELECTED CONVERSATION LANGUAGE:
+${selectedLanguage.name}
+
+LANGUAGE INSTRUCTIONS:
+${selectedLanguage.instruction}
+`;
 
   const safetyContext = `
 APPLICATION SAFETY CONTEXT:
@@ -51,7 +82,11 @@ Do not treat a previous high-risk message as proof that the current message is h
     messages: [
       {
         role: "system",
-        content: SYSTEM_PROMPT,
+        content: BASE_SYSTEM_PROMPT,
+      },
+      {
+        role: "system",
+        content: languageContext,
       },
       {
         role: "system",
