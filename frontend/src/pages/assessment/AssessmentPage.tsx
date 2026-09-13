@@ -7,18 +7,18 @@ import ConsentStep from "../../components/assessment/ConsentStep";
 import LanguageStep from "../../components/assessment/LanguageStep";
 import ModeStep from "../../components/assessment/ModeStep";
 
-import { createAssessment } from "../../services/api";
+import { createAssessment, type SakhiLanguage } from "../../services/api";
 
 type AssessmentStep = 1 | 2 | 3 | 4;
 
 function AssessmentPage() {
-  const [step, setStep] = useState<AssessmentStep>(1);
-  const [language, setLanguage] = useState("en");
-  const [mode, setMode] = useState<"text" | "voice">("text");
-
   const navigate = useNavigate();
 
-  const handleLanguageContinue = (selectedLanguage: string) => {
+  const [step, setStep] = useState<AssessmentStep>(1);
+  const [language, setLanguage] = useState<SakhiLanguage>("en");
+  const [mode, setMode] = useState<"text" | "voice">("text");
+
+  const handleLanguageContinue = (selectedLanguage: SakhiLanguage) => {
     setLanguage(selectedLanguage);
     setStep(4);
   };

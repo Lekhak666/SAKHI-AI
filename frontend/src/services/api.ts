@@ -1,7 +1,9 @@
 const API_BASE_URL = "http://localhost:5000/api";
 
+export type SakhiLanguage = "en" | "hi" | "bn";
+
 type CreateAssessmentData = {
-  language: string;
+  language: SakhiLanguage;
   mode: "text" | "voice";
   consent: boolean;
 };
@@ -10,7 +12,7 @@ type CreateAssessmentResponse = {
   success: boolean;
   assessment: {
     id: string;
-    language: string;
+    language: SakhiLanguage;
     mode: "text" | "voice";
     consent: boolean;
   };

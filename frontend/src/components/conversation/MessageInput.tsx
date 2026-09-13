@@ -125,7 +125,7 @@ function MessageInput({ mode, onSend, isSending = false }: MessageInputProps) {
       )}
 
       <p className="mt-3 text-center text-[11px] text-slate-400">
-        Shift + Enter for a new line
+        You can share only what you are comfortable sharing.
       </p>
     </div>
   );

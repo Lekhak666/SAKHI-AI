@@ -1,16 +1,18 @@
-import {
-  ArrowLeft,
-  ArrowRight,
-  Globe2,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Globe2 } from "lucide-react";
 import { useState } from "react";
+
+import type { SakhiLanguage } from "../../services/api";
 
 interface LanguageStepProps {
   onBack: () => void;
-  onContinue: (language: string) => void;
+  onContinue: (language: SakhiLanguage) => void;
 }
 
-const languages = [
+const languages: {
+  id: SakhiLanguage;
+  name: string;
+  nativeName: string;
+}[] = [
   {
     id: "en",
     name: "English",
@@ -28,12 +30,8 @@ const languages = [
   },
 ];
 
-function LanguageStep({
-  onBack,
-  onContinue,
-}: LanguageStepProps) {
-  const [selectedLanguage, setSelectedLanguage] =
-    useState("en");
+function LanguageStep({ onBack, onContinue }: LanguageStepProps) {
+  const [selectedLanguage, setSelectedLanguage] = useState<SakhiLanguage>("en");
 
   return (
     <div>
@@ -53,16 +51,13 @@ function LanguageStep({
 
       <div className="mx-auto mt-10 grid max-w-2xl gap-4 sm:grid-cols-3">
         {languages.map((language) => {
-          const selected =
-            selectedLanguage === language.id;
+          const selected = selectedLanguage === language.id;
 
           return (
             <button
               key={language.id}
               type="button"
-              onClick={() =>
-                setSelectedLanguage(language.id)
-              }
+              onClick={() => setSelectedLanguage(language.id)}
               className={`rounded-2xl border p-6 text-left transition ${
                 selected
                   ? "border-rose-500 bg-rose-50 ring-2 ring-rose-100"
@@ -71,15 +66,11 @@ function LanguageStep({
             >
               <div
                 className={`mb-6 h-3 w-3 rounded-full ${
-                  selected
-                    ? "bg-rose-500"
-                    : "bg-slate-200"
+                  selected ? "bg-rose-500" : "bg-slate-200"
                 }`}
               />
 
-              <p className="font-semibold text-slate-900">
-                {language.name}
-              </p>
+              <p className="font-semibold text-slate-900">{language.name}</p>
 
               <p className="mt-1 text-sm text-slate-500">
                 {language.nativeName}
