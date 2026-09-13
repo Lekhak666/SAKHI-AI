@@ -77,6 +77,19 @@ export const addMessage = async (req, res, next) => {
 
     const risk = assessRisk(message);
 
+    console.log("========== SAFETY DEBUG ==========");
+    console.log("Current message:", message);
+    console.log("Current message risk:", risk.level);
+    console.log("Previous conversation risk:", conversation.riskLevel);
+
+    conversation.riskLevel = getHighestRiskLevel(
+      conversation.riskLevel,
+      risk.level,
+    );
+
+    console.log("Updated conversation risk:", conversation.riskLevel);
+    console.log("==================================");
+
     conversation.riskLevel = getHighestRiskLevel(
       conversation.riskLevel,
       risk.level,
@@ -127,7 +140,7 @@ export const addMessage = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      riskLevel: risk.level,
+      riskLevel: conversation.riskLevel,
       userMessage,
       assistantMessage,
       conversationId: conversation._id,

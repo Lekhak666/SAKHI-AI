@@ -32,6 +32,10 @@ Do not overwhelm the user with long lists unless they ask for detailed informati
 `;
 
 export const generateAIResponse = async (messages, currentRiskLevel) => {
+  console.log("========== AI DEBUG ==========");
+  console.log("AI current risk level:", currentRiskLevel);
+  console.log("==============================");
+
   const safetyContext = `
 APPLICATION SAFETY CONTEXT:
 Current user message risk level: ${currentRiskLevel}
