@@ -7,55 +7,51 @@ import LanguageStep from "../../components/assessment/LanguageStep";
 import ModeStep from "../../components/assessment/ModeStep";
 import { useNavigate } from "react-router-dom";
 
+import { createAssessment } from "../../services/api";
+
 type AssessmentStep = 1 | 2 | 3 | 4;
 
 function AssessmentPage() {
-  const [step, setStep] =
-    useState<AssessmentStep>(1);
+  const [step, setStep] = useState<AssessmentStep>(1);
 
-  const [language, setLanguage] =
-    useState("en");
+  const [language, setLanguage] = useState("en");
 
-  const [mode, setMode] =
-    useState<"text" | "voice">("text");
+  const [mode, setMode] = useState<"text" | "voice">("text");
 
   const navigate = useNavigate();
 
-  const handleLanguageContinue = (
-    selectedLanguage: string
-  ) => {
+  const handleLanguageContinue = (selectedLanguage: string) => {
     setLanguage(selectedLanguage);
     setStep(4);
   };
 
-  const handleModeContinue = (
-    selectedMode: "text" | "voice"
-  ) => {
+  const handleModeContinue = async (selectedMode: "text" | "voice") => {
     setMode(selectedMode);
 
-    console.log(
-      "Assessment language:",
-      language
-    );
+    try {
+      const result = await createAssessment({
+        language,
+        mode: selectedMode,
+        consent: true,
+      });
 
-    console.log(
-      "Interaction mode:",
-      selectedMode
-    );
+      console.log("Assessment created:", result);
 
-    navigate("/conversation");
-
-    // Phase 3.5:
-    // move into conversation interface.
+      navigate("/conversation", {
+        state: {
+          conversationId: result.conversation.id,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to create assessment:", error);
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#fcfafb]">
-
       {/* Header */}
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-
           <a
             href="/"
             className="text-lg font-semibold tracking-tight text-slate-950"
@@ -66,29 +62,19 @@ function AssessmentPage() {
           <span className="text-xs font-medium uppercase tracking-[0.15em] text-slate-400">
             A friend who listens
           </span>
-
         </div>
       </header>
 
       {/* Main */}
       <main className="mx-auto max-w-5xl px-6 py-10 sm:py-14">
-
         {/* Progress */}
         <div className="mx-auto max-w-2xl">
-          <ProgressBar
-            currentStep={step}
-            totalSteps={4}
-          />
+          <ProgressBar currentStep={step} totalSteps={4} />
         </div>
 
         {/* Step content */}
         <div className="mx-auto mt-14 max-w-3xl">
-
-          {step === 1 && (
-            <WelcomeStep
-              onContinue={() => setStep(2)}
-            />
-          )}
+          {step === 1 && <WelcomeStep onContinue={() => setStep(2)} />}
 
           {step === 2 && (
             <ConsentStep
@@ -110,9 +96,7 @@ function AssessmentPage() {
               onContinue={handleModeContinue}
             />
           )}
-
         </div>
-
       </main>
     </div>
   );

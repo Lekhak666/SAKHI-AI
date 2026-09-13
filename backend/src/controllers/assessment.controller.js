@@ -13,6 +13,13 @@ export const createAssessment = async (req, res, next) => {
 
     const conversation = await Conversation.create({
       assessmentId: assessment._id,
+      messages: [
+        {
+          role: "assistant",
+          content:
+            "Hi, I’m SAKHI. I’m glad you’re here. 🌸 You can take your time here—there’s no need to have the perfect words. I’m here to listen and understand what’s been on your mind. What would you like to talk about today?",
+        },
+      ],
     });
 
     res.status(201).json({
