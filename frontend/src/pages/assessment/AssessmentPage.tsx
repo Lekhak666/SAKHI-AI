@@ -1,11 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import ProgressBar from "../../components/assessment/ProgressBar";
 import WelcomeStep from "../../components/assessment/WelcomeStep";
 import ConsentStep from "../../components/assessment/ConsentStep";
 import LanguageStep from "../../components/assessment/LanguageStep";
 import ModeStep from "../../components/assessment/ModeStep";
-import { useNavigate } from "react-router-dom";
 
 import { createAssessment } from "../../services/api";
 
@@ -13,9 +13,7 @@ type AssessmentStep = 1 | 2 | 3 | 4;
 
 function AssessmentPage() {
   const [step, setStep] = useState<AssessmentStep>(1);
-
   const [language, setLanguage] = useState("en");
-
   const [mode, setMode] = useState<"text" | "voice">("text");
 
   const navigate = useNavigate();
@@ -37,11 +35,7 @@ function AssessmentPage() {
 
       console.log("Assessment created:", result);
 
-      navigate("/conversation", {
-        state: {
-          conversationId: result.conversation.id,
-        },
-      });
+      navigate(`/conversation/${result.conversation.id}`);
     } catch (error) {
       console.error("Failed to create assessment:", error);
     }

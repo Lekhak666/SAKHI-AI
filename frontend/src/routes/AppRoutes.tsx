@@ -19,7 +19,10 @@ function AppRoutes() {
 
       <Route path="/admin" element={<AdminDashboard />} />
 
-      <Route path="/conversation" element={<ConversationPage />} />
+      <Route
+        path="/conversation/:conversationId"
+        element={<ConversationPage />}
+      />
     </Routes>
   );
 }
