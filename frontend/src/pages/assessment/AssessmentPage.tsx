@@ -35,7 +35,7 @@ function AssessmentPage() {
 
       console.log("Assessment created:", result);
 
-      navigate(`/conversation/${result.conversation.id}`);
+      navigate(`/conversation/${result.conversation.id}?mode=${selectedMode}`);
     } catch (error) {
       console.error("Failed to create assessment:", error);
     }

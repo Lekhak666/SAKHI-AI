@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 
 import ConversationHeader from "../../components/conversation/ConversationHeader";
 import MessageList, {
@@ -9,11 +10,36 @@ import MessageInput from "../../components/conversation/MessageInput";
 
 import { getConversation, sendMessage } from "../../services/api";
 
+const speakText = (text: string) => {
+  if (!("speechSynthesis" in window)) {
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const cleanText = text
+    .replace(/[#*_`]/g, "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/\|/g, " ")
+    .replace(/\n+/g, " ")
+    .trim();
+
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+
+  utterance.lang = "en-US";
+  utterance.rate = 0.95;
+  utterance.pitch = 1;
+
+  window.speechSynthesis.speak(utterance);
+};
+
 function ConversationPage() {
   const navigate = useNavigate();
   const { conversationId } = useParams();
 
-  const [mode] = useState<"text" | "voice">("text");
+  const [searchParams] = useSearchParams();
+
+  const mode = searchParams.get("mode") === "voice" ? "voice" : "text";
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -80,6 +106,10 @@ function ConversationPage() {
 
     try {
       const result = await sendMessage(conversationId, userMessage);
+
+      if (mode === "voice") {
+        speakText(result.assistantMessage.content);
+      }
 
       setMessages((currentMessages) => [
         ...currentMessages,
@@ -175,7 +205,11 @@ function ConversationPage() {
 
             {/* Input */}
             <div className="border-t border-slate-100 bg-white">
-              <MessageInput mode={mode} onSend={handleSend} />
+              <MessageInput
+                mode={mode}
+                onSend={handleSend}
+                disabled={isSending}
+              />
             </div>
           </div>
         </div>
