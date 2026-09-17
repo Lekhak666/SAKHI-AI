@@ -1,116 +1,119 @@
+import axios from "axios";
+
 const API_BASE_URL = "http://localhost:5000/api";
 
-export type SakhiLanguage = "en" | "hi" | "bn";
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-type CreateAssessmentData = {
-  language: SakhiLanguage;
-  mode: "text" | "voice";
+export type SupportedLanguage = "en" | "hi" | "bn";
+
+export type InteractionMode = "text" | "voice";
+
+export interface CreateAssessmentData {
+  language: SupportedLanguage;
+  mode: InteractionMode;
   consent: boolean;
-};
+}
 
-type CreateAssessmentResponse = {
+export interface CreateAssessmentResponse {
   success: boolean;
+
   assessment: {
     id: string;
-    language: SakhiLanguage;
-    mode: "text" | "voice";
+    language: SupportedLanguage;
+    mode: InteractionMode;
     consent: boolean;
   };
+
   conversation: {
     id: string;
   };
-};
+}
 
-type SendMessageResponse = {
-  success: boolean;
+export interface ConversationMessage {
+  _id?: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp?: string;
+}
+
+export interface ConversationData {
+  _id: string;
+  assessmentId:
+    | string
+    | {
+        _id: string;
+        language: SupportedLanguage;
+        mode: InteractionMode;
+      };
+
+  messages: ConversationMessage[];
+
   riskLevel: "low" | "medium" | "high";
+
+  status: "active" | "closed";
+}
+
+export interface GetConversationResponse {
+  success: boolean;
+  conversation: ConversationData;
+}
+
+export interface SendMessageResponse {
+  success: boolean;
+
+  riskLevel: "low" | "medium" | "high";
+
   userMessage: {
     role: "user";
     content: string;
     timestamp?: string;
   };
+
   assistantMessage: {
     role: "assistant";
     content: string;
     timestamp?: string;
   };
+
   conversationId: string;
-};
+}
 
-type ConversationMessage = {
-  _id?: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp?: string;
-};
+export const createAssessment = async (
+  data: CreateAssessmentData,
+): Promise<CreateAssessmentResponse> => {
+  const response = await api.post<CreateAssessmentResponse>(
+    "/assessments",
+    data,
+  );
 
-type GetConversationResponse = {
-  success: boolean;
-  conversation: {
-    _id: string;
-    assessmentId: string;
-    messages: ConversationMessage[];
-    riskLevel: "low" | "medium" | "high";
-    status: "active" | "closed";
-  };
+  return response.data;
 };
 
 export const getConversation = async (
   conversationId: string,
 ): Promise<GetConversationResponse> => {
-  const response = await fetch(
-    `${API_BASE_URL}/conversations/${conversationId}`,
+  const response = await api.get<GetConversationResponse>(
+    `/conversations/${conversationId}`,
   );
 
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.message || "Failed to fetch conversation");
-  }
-
-  return result;
-};
-
-export const createAssessment = async (
-  data: CreateAssessmentData,
-): Promise<CreateAssessmentResponse> => {
-  const response = await fetch(`${API_BASE_URL}/assessments`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.message || "Failed to create assessment");
-  }
-
-  return result;
+  return response.data;
 };
 
 export const sendMessage = async (
   conversationId: string,
   message: string,
 ): Promise<SendMessageResponse> => {
-  const response = await fetch(
-    `${API_BASE_URL}/conversations/${conversationId}/messages`,
+  const response = await api.post<SendMessageResponse>(
+    `/conversations/${conversationId}/messages`,
     {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message }),
+      message,
     },
   );
 
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.message || "Failed to send message");
-  }
-
-  return result;
+  return response.data;
 };

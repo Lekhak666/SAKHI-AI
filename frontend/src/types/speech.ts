@@ -1,18 +1,26 @@
+export interface SpeechRecognitionAlternativeLike {
+  transcript: string;
+  confidence?: number;
+}
+
 export interface SpeechRecognitionResultLike {
   isFinal: boolean;
-  [index: number]: {
-    transcript: string;
-  };
+  length: number;
+  [index: number]: SpeechRecognitionAlternativeLike;
+}
+
+export interface SpeechRecognitionResultListLike {
+  length: number;
+  [index: number]: SpeechRecognitionResultLike;
 }
 
 export interface SpeechRecognitionEventLike extends Event {
-  results: {
-    [index: number]: SpeechRecognitionResultLike;
-  };
+  results: SpeechRecognitionResultListLike;
 }
 
 export interface SpeechRecognitionErrorEventLike extends Event {
   error: string;
+  message?: string;
 }
 
 export interface SpeechRecognitionInstance {

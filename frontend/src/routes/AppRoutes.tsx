@@ -1,10 +1,11 @@
 import { Routes, Route } from "react-router-dom";
+
 import LandingPage from "../pages/landing/LandingPage";
 import AssessmentPage from "../pages/assessment/AssessmentPage";
+import ConversationPage from "../pages/conversation/ConversationPage";
 import SupportPage from "../pages/support/SupportPage";
 import CounsellorDashboard from "../pages/counsellor/CounsellorDashboard";
 import AdminDashboard from "../pages/admin/AdminDashboard";
-import ConversationPage from "../pages/conversation/ConversationPage";
 
 function AppRoutes() {
   return (
@@ -13,16 +14,16 @@ function AppRoutes() {
 
       <Route path="/assessment" element={<AssessmentPage />} />
 
+      <Route
+        path="/conversation/:conversationId"
+        element={<ConversationPage />}
+      />
+
       <Route path="/support" element={<SupportPage />} />
 
       <Route path="/counsellor" element={<CounsellorDashboard />} />
 
       <Route path="/admin" element={<AdminDashboard />} />
-
-      <Route
-        path="/conversation/:conversationId"
-        element={<ConversationPage />}
-      />
     </Routes>
   );
 }
